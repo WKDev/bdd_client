@@ -1,4 +1,5 @@
-import uvicorn, cv2, os
+import uvicorn, os
+import cv2 as cv
 
 from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
@@ -16,27 +17,41 @@ base_path = base_path+"\\video"
 if not os.path.exists(base_path):
     os.makedirs(base_path)
 
-fourcc = cv2.VideoWriter_fourcc(*'XVID')
+fourcc = cv.VideoWriter_fourcc(*'XVID')
 record = False
 
 
-def read_cam(cam_id=0):
+cam_1 = cv.VideoCapture(0)
+cam_2 = cv.VideoCapture(2)
+cam_3 = cv.VideoCapture(4)
+
+cam_1.set(cv.CAP_PROP_FRAME_WIDTH, 640)
+cam_1.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
+cam_1.set(cv.CAP_PROP_FPS, 15)
+
+cam_2.set(cv.CAP_PROP_FRAME_WIDTH, 640)
+cam_2.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
+cam_2.set(cv.CAP_PROP_FPS, 15)
+
+cam_3.set(cv.CAP_PROP_FRAME_WIDTH, 640)
+cam_3.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
+cam_3.set(cv.CAP_PROP_FPS, 15)
+
+
+def read_cam(cam, cam_id=0):
 
     # camera 정의
-    cam = cv2.VideoCapture(cam_id, cv2.CAP_DSHOW)
-    cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-    cam.set(cv2.CAP_PROP_FPS, 15)
+    # cam = cv.VideoCapture(cam_id, cv.CAP_DSHOW) # Windows의 경우 이걸 실행
 
     if not cam.isOpened():
         if cam_id == 0:
-            loading_img = cv2.imread('./assets/cam1_opening.png')
+            loading_img = cv.imread('./assets/cam1_opening.png')
         elif cam_id == 1:
-            loading_img = cv2.imread('./assets/cam2_opening.png')
+            loading_img = cv.imread('./assets/cam2_opening.png')
         elif cam_id == 2:
-            loading_img = cv2.imread('./assets/cam3_opening.png')
+            loading_img = cv.imread('./assets/cam3_opening.png')
 
-        ret, img = cv2.imencode('.jpg', loading_img)
+        ret, img = cv.imencode('.jpg', loading_img)
 
         byte_img = img.tobytes()
         yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
@@ -49,20 +64,20 @@ def read_cam(cam_id=0):
         if not success:
 
             if cam_id == 0:
-                loading_img = cv2.imread('./assets/cam1_opening.png')
+                loading_img = cv.imread('./assets/cam1_opening.png')
             elif cam_id == 1:
-                loading_img = cv2.imread('./assets/cam2_opening.png')
+                loading_img = cv.imread('./assets/cam2_opening.png')
             elif cam_id == 2:
-                loading_img = cv2.imread('./assets/cam3_opening.png')
+                loading_img = cv.imread('./assets/cam3_opening.png')
 
-            ret, img = cv2.imencode('.jpg', loading_img)
+            ret, img = cv.imencode('.jpg', loading_img)
 
             byte_img = img.tobytes()
             yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
                    bytearray(byte_img) + b'\r\n')
         else:
 
-            ret, buffer = cv2.imencode('.jpg', frame)
+            ret, buffer = cv.imencode('.jpg', frame)
             # frame을 byte로 변경 후 특정 식??으로 변환 후에
             # yield로 하나씩 넘겨준다.
             frame = buffer.tobytes()
@@ -72,15 +87,15 @@ def read_cam(cam_id=0):
 
 @app.get("/live/1")
 def bird_detection():
-    return StreamingResponse(read_cam(cam_id=0), media_type="multipart/x-mixed-replace; boundary=frame")
+    return StreamingResponse(read_cam(cam=cam_1, cam_id=0), media_type="multipart/x-mixed-replace; boundary=frame")
 
 @app.get("/live/2")
 def bird_detection_2():
-    return StreamingResponse(read_cam(cam_id=1), media_type="multipart/x-mixed-replace; boundary=frame")
+    return StreamingResponse(read_cam(cam=cam_2, cam_id=1), media_type="multipart/x-mixed-replace; boundary=frame")
 
 @app.get("/live/3")
 def bird_detection_3():
-    return StreamingResponse(read_cam(cam_id=2), media_type="multipart/x-mixed-replace; boundary=frame")
+    return StreamingResponse(read_cam(cam=cam_3, cam_id=2), media_type="multipart/x-mixed-replace; boundary=frame")
 
 @app.get("/cmd/pipeline")
 def bird_detection_4():
