@@ -23,8 +23,8 @@ def run_sequential():
     for dev in rd_devs:
         GPIO.output(dev, GPIO.HIGH)
         time.sleep(GPIO_INT)
+        GPIO.output(dev, GPIO.LOW)
 
-    clear_gpio()
 
 def run_at_once():
     rd_devs = rd.choices(devs, k=rd.choice(range(1,3)))
@@ -44,8 +44,14 @@ def exec_ext():
 
 
 if __name__ == "__main__":
-    init_gpio()
-    exec_ext()
+    # init_gpio()
+    # exec_ext()
+
+    for dev in devs:
+        GPIO.output(dev, GPIO.HIGH)
+        time.sleep(GPIO_INT)
+
+    clear_gpio()
 
         
 
