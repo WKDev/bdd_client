@@ -5,7 +5,7 @@ except RuntimeError:
 
 import random as rd
 import time
-import asyncio
+
 devs = [23,24,25]
 devs_bcm = [16,18,22]
 
@@ -31,13 +31,13 @@ async def run_sequential(interval):
         rd_dev = rd.choices(devs, k=1)
 
         GPIO.output(rd_dev, GPIO.HIGH)
-        await asyncio.sleep(interval)
+        time.sleep(interval)
         GPIO.output(rd_dev, GPIO.LOW)
-        await asyncio.sleep(interval)
+        time.sleep(interval)
 
 
 
-async def run_at_once(interval):
+def run_at_once(interval):
     print('run at once with interval : ' + str(interval))
     pick_num = rd.choice(range(1,4))
 
@@ -46,24 +46,24 @@ async def run_at_once(interval):
         rd_devs = rd.choices(devs, k=pick_num)
 
         GPIO.output(rd_devs, GPIO.HIGH)
-        await asyncio.sleep(interval)
+        time.sleep(interval)
         GPIO.output(rd_devs, GPIO.LOW)
         # await asyncio.sleep(GPIO_INT)
 
-async def exec_ext(interval):
+def exec_ext(interval):
     rnd = rd.random()
     print(rnd)
     if rnd > 0.5:
-        await asyncio.gather(run_sequential(interval))
+        run_sequential(interval)
     else:
-        await asyncio.gather(run_at_once(interval))
+        run_at_once(interval)
 
 
 
 
 if __name__ == "__main__":
     init_gpio()
-    asyncio.run(exec_ext(interval=GPIO_INT))
+    exec_ext(interval=GPIO_INT)
     # while True:
     #     GPIO.output(23, GPIO.HIGH)
     #     time.sleep(1)

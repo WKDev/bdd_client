@@ -121,7 +121,10 @@ def bird_detection_2():
 @app.post("/cmd/ext")
 # EXTERMINATION
 async def extermination(item : ExtParams):
-    asyncio.run(exec_ext(interval=item.length))
+
+    # exec_ext(interval=item.length)
+    t = threading.Thread(target=exec_ext, args=item.length)
+    t.start()
     return {"length": item.length, "code": 200}
 
 
