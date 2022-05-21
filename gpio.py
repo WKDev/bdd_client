@@ -50,9 +50,9 @@ def run_at_once():
         # time.sleep(GPIO_INT)
 
 def exec_ext():
-    rd = rd.random()
-    print(rd)
-    if rd > 0.5:
+    rnd = rd.random()
+    print(rnd)
+    if rnd > 0.5:
         run_sequential()
     else:
         run_at_once()
