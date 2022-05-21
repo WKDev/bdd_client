@@ -26,10 +26,16 @@ if not os.path.exists(base_path):
     os.makedirs(base_path)
 
 fourcc = cv.VideoWriter_fourcc(*'XVID')
+fourcc_h264 = cv.VideoWriter_fourcc(*'H264')
+fourcc_MJPG = cv.VideoWriter_fourcc(*'MJPG')
 record = False
 
-STREAM_WIDTH = 480
-STREAM_HEIGHT = 270
+# v4l2-ctl -d 0 --list-formats # dev/video0
+# v4l2-ctl -d 0 --list-formats-ext # dev/video0
+
+
+STREAM_WIDTH = 640
+STREAM_HEIGHT = 480
 
 cam_1 = cv.VideoCapture(0)
 cam_2 = cv.VideoCapture(2)
@@ -37,7 +43,7 @@ cam_2 = cv.VideoCapture(2)
 cam_1.set(cv.CAP_PROP_FRAME_WIDTH, STREAM_WIDTH)
 cam_1.set(cv.CAP_PROP_FRAME_HEIGHT, STREAM_HEIGHT)
 cam_1.set(cv.CAP_PROP_FPS, 15)
-# cap.set(cv.CAP_PROP_FOURCC, cv.FOURCC('M', 'J', 'P', 'G'));
+cam_1.set(cv.CAP_PROP_FOURCC, fourcc_h264);
 
 cam_2.set(cv.CAP_PROP_FRAME_WIDTH, STREAM_WIDTH)
 cam_2.set(cv.CAP_PROP_FRAME_HEIGHT, STREAM_HEIGHT)
