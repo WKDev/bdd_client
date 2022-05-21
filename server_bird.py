@@ -33,8 +33,6 @@ STREAM_HEIGHT = 270
 
 cam_1 = cv.VideoCapture(0)
 cam_2 = cv.VideoCapture(2)
-cam_3 = cv.VideoCapture(4)
-cam_4 = cv.VideoCapture(6)
 
 cam_1.set(cv.CAP_PROP_FRAME_WIDTH, STREAM_WIDTH)
 cam_1.set(cv.CAP_PROP_FRAME_HEIGHT, STREAM_HEIGHT)
@@ -50,6 +48,7 @@ def read_cam(cam, cam_id=0):
 
     # camera 정의
     # cam = cv.VideoCapture(cam_id, cv.CAP_DSHOW) # Windows의 경우 이걸 실행
+    cam.get(cv.CAP_PROP_FPS)
 
     if not cam.isOpened():
         if cam_id == 0:
