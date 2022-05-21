@@ -5,6 +5,7 @@ except RuntimeError:
 
 import random as rd
 import time
+import asyncio
 devs = [23,24,25]
 devs_bcm = [16,18,22]
 
@@ -30,9 +31,9 @@ async def run_sequential(interval):
         rd_dev = rd.choices(devs, k=1)
 
         GPIO.output(rd_dev, GPIO.HIGH)
-        time.sleep(interval)
+        await asyncio.sleep(interval)
         GPIO.output(rd_dev, GPIO.LOW)
-        time.sleep(interval)
+        await asyncio.sleep(interval)
 
 
 
@@ -45,17 +46,17 @@ async def run_at_once(interval):
         rd_devs = rd.choices(devs, k=pick_num)
 
         GPIO.output(rd_devs, GPIO.HIGH)
-        time.sleep(interval)
+        await asyncio.sleep(interval)
         GPIO.output(rd_devs, GPIO.LOW)
-        # time.sleep(GPIO_INT)
+        # await asyncio.sleep(GPIO_INT)
 
 def exec_ext(interval):
     rnd = rd.random()
     print(rnd)
     if rnd > 0.5:
-        run_sequential(interval)
+        asyncio.run(run_sequential(interval))
     else:
-        run_at_once(interval)
+        asyncio.run(run_at_once(interval))
 
 
 
