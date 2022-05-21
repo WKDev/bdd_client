@@ -42,6 +42,10 @@ def run_sequential():
 
     clear_gpio()
 
+if __name__ == "__main__":
+    init_gpio()
+    exec_ext()
+
         
 
 
