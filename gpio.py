@@ -24,11 +24,14 @@ def clear_gpio():
 
 
 def run_sequential():
-    rd_devs = rd.shuffle(devs)
-    for dev in rd_devs:
-        GPIO.output(dev, GPIO.HIGH)
+    rd_dev = rd.choices(devs, k=1)
+
+    for i in range(1,4):
+        GPIO.output(rd_dev, GPIO.HIGH)
         time.sleep(GPIO_INT)
-        GPIO.output(dev, GPIO.LOW)
+        GPIO.output(rd_dev, GPIO.LOW)
+        time.sleep(GPIO_INT)
+
 
 
 def run_at_once():
