@@ -13,6 +13,7 @@ GPIO_INT = 1
 
 def init_gpio():
     GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
     GPIO.setup(devs, GPIO.OUT, initial=GPIO.LOW)
     GPIO.setup(devs_bcm, GPIO.OUT, initial=GPIO.LOW)
 
@@ -24,9 +25,10 @@ def clear_gpio():
 
 
 def run_sequential():
-    rd_dev = rd.choices(devs, k=1)
-
+    print('sequantial')
     for i in range(1,4):
+        rd_dev = rd.choices(devs, k=1)
+
         GPIO.output(rd_dev, GPIO.HIGH)
         time.sleep(GPIO_INT)
         GPIO.output(rd_dev, GPIO.LOW)
@@ -35,12 +37,17 @@ def run_sequential():
 
 
 def run_at_once():
+    print('run at once')
     pick_num = rd.choice(range(1,4))
-    rd_devs = rd.choices(devs, k=pick_num)
 
-    GPIO.output(rd_devs, GPIO.HIGH)
-    time.sleep(GPIO_INT)
-    clear_gpio()
+    for i in range(1,4):
+        pick_num = rd.choice(range(1,4))
+        rd_devs = rd.choices(devs, k=pick_num)
+
+        GPIO.output(rd_devs, GPIO.HIGH)
+        time.sleep(GPIO_INT)
+        GPIO.output(rd_devs, GPIO.LOW)
+        # time.sleep(GPIO_INT)
 
 def exec_ext():
     if rd.random() > 0.5:
