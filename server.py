@@ -20,26 +20,29 @@ if not os.path.exists(base_path):
 fourcc = cv.VideoWriter_fourcc(*'XVID')
 record = False
 
+STREAM_WIDTH = 480
+STREAM_HEIGHT = 480
 
 cam_1 = cv.VideoCapture(0)
 cam_2 = cv.VideoCapture(2)
 cam_3 = cv.VideoCapture(4)
 cam_4 = cv.VideoCapture(6)
 
-cam_1.set(cv.CAP_PROP_FRAME_WIDTH, 640)
-cam_1.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
+cam_1.set(cv.CAP_PROP_FRAME_WIDTH, STREAM_WIDTH)
+cam_1.set(cv.CAP_PROP_FRAME_HEIGHT, STREAM_HEIGHT)
 cam_1.set(cv.CAP_PROP_FPS, 15)
+cap.set(cv.CAP_PROP_FOURCC, cv.FOURCC('M', 'J', 'P', 'G'));
 
-cam_2.set(cv.CAP_PROP_FRAME_WIDTH, 640)
-cam_2.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
+cam_2.set(cv.CAP_PROP_FRAME_WIDTH, STREAM_WIDTH)
+cam_2.set(cv.CAP_PROP_FRAME_HEIGHT, STREAM_HEIGHT)
 cam_2.set(cv.CAP_PROP_FPS, 15)
 
-cam_3.set(cv.CAP_PROP_FRAME_WIDTH, 640)
-cam_3.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
+cam_3.set(cv.CAP_PROP_FRAME_WIDTH, STREAM_WIDTH)
+cam_3.set(cv.CAP_PROP_FRAME_HEIGHT, STREAM_HEIGHT)
 cam_3.set(cv.CAP_PROP_FPS, 15)
 
-cam_4.set(cv.CAP_PROP_FRAME_WIDTH, 640)
-cam_4.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
+cam_4.set(cv.CAP_PROP_FRAME_WIDTH, STREAM_WIDTH)
+cam_4.set(cv.CAP_PROP_FRAME_HEIGHT, STREAM_HEIGHT)
 cam_4.set(cv.CAP_PROP_FPS, 15)
 
 def read_cam(cam, cam_id=0):
