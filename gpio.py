@@ -24,7 +24,7 @@ def clear_gpio():
     time.sleep(GPIO_INT)
 
 
-def run_sequential(interval):
+async def run_sequential(interval):
     print('sequential with interval : ' + str(interval))
     for i in range(1,4):
         rd_dev = rd.choices(devs, k=1)
@@ -36,7 +36,7 @@ def run_sequential(interval):
 
 
 
-def run_at_once(interval):
+async def run_at_once(interval):
     print('run at once with interval : ' + str(interval))
     pick_num = rd.choice(range(1,4))
 
