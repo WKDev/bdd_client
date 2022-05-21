@@ -6,12 +6,16 @@ except RuntimeError:
 import random as rd
 import time
 devs = [23,24,25]
+devs_bcm = [16,18,22]
+
 
 GPIO_INT = 1000
 
 def init_gpio():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(devs, GPIO.OUT, initial=GPIO.LOW)
+    GPIO.setup(devs_bcm, GPIO.OUT, initial=GPIO.LOW)
+
 
 
 def clear_gpio():
@@ -44,14 +48,17 @@ def exec_ext():
 
 
 if __name__ == "__main__":
-    # init_gpio()
+    init_gpio()
     # exec_ext()
+    while True:
+        GPIO.output(18, GPIO.HIGH)
+        time.sleep(300)
+        print('off')
+        GPIO.output(18, GPIO.LOW)
+        time.sleep(300)
 
-    for dev in devs:
-        GPIO.output(dev, GPIO.HIGH)
-        time.sleep(GPIO_INT)
 
-    clear_gpio()
+
 
         
 
