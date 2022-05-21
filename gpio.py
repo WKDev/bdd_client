@@ -15,7 +15,7 @@ def init_gpio():
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     GPIO.setup(devs, GPIO.OUT, initial=GPIO.LOW)
-    GPIO.setup(devs_bcm, GPIO.OUT, initial=GPIO.LOW)
+    # GPIO.setup(devs_bcm, GPIO.OUT, initial=GPIO.LOW)
 
 
 
@@ -25,7 +25,7 @@ def clear_gpio():
 
 
 def run_sequential(interval):
-    print('sequantial')
+    print('sequential with interval : ' + str(interval))
     for i in range(1,4):
         rd_dev = rd.choices(devs, k=1)
 
@@ -37,7 +37,7 @@ def run_sequential(interval):
 
 
 def run_at_once(interval):
-    print('run at once')
+    print('run at once with interval : ' + str(interval))
     pick_num = rd.choice(range(1,4))
 
     for i in range(1,4):
