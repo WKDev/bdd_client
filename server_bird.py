@@ -123,7 +123,7 @@ def bird_detection_2():
 async def extermination(item : ExtParams):
 
     # exec_ext(interval=item.length)
-    t = threading.Thread(target=exec_ext, args=item.length)
+    t = threading.Thread(target=exec_ext, args=(item.length,))
     t.start()
     return {"length": item.length, "code": 200}
 
