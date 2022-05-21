@@ -1,5 +1,6 @@
 import uvicorn, os
 import cv2 as cv
+import threading
 
 from fastapi import FastAPI
 # from fastapi.templating import Jinja2Templates
@@ -21,7 +22,7 @@ fourcc = cv.VideoWriter_fourcc(*'XVID')
 record = False
 
 STREAM_WIDTH = 480
-STREAM_HEIGHT = 480
+STREAM_HEIGHT = 270
 
 cam_1 = cv.VideoCapture(0)
 cam_2 = cv.VideoCapture(2)
@@ -31,7 +32,7 @@ cam_4 = cv.VideoCapture(6)
 cam_1.set(cv.CAP_PROP_FRAME_WIDTH, STREAM_WIDTH)
 cam_1.set(cv.CAP_PROP_FRAME_HEIGHT, STREAM_HEIGHT)
 cam_1.set(cv.CAP_PROP_FPS, 15)
-cap.set(cv.CAP_PROP_FOURCC, cv.FOURCC('M', 'J', 'P', 'G'));
+# cap.set(cv.CAP_PROP_FOURCC, cv.FOURCC('M', 'J', 'P', 'G'));
 
 cam_2.set(cv.CAP_PROP_FRAME_WIDTH, STREAM_WIDTH)
 cam_2.set(cv.CAP_PROP_FRAME_HEIGHT, STREAM_HEIGHT)
@@ -116,9 +117,14 @@ def bird_detection_4():
 def bird_detection_4():
     return StreamingResponse(read_cam(cam_id=2), media_type="multipart/x-mixed-replace; boundary=frame")
 
+@app.get("/cmd/ext")
+# EXTERMINATION
+def bird_detection_4():
+    return StreamingResponse(read_cam(cam_id=2), media_type="multipart/x-mixed-replace; boundary=frame")
+
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=80)
+    uvicorn.run(app, host="0.0.0.0", port=5000)
 
     # Works To Do::
     # 1. 다중 카메라 연동
