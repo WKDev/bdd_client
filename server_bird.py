@@ -46,11 +46,14 @@ cam_1.set(cv.CAP_PROP_FRAME_WIDTH, STREAM_WIDTH)
 cam_1.set(cv.CAP_PROP_FRAME_HEIGHT, STREAM_HEIGHT)
 cam_1.set(cv.CAP_PROP_FPS, 15)
 cam_1.set(cv.CAP_PROP_FOURCC, fourcc_yuv2)
+cam_1.set(cv.CAP_PROP_BUFFERSIZE, 5)
 
 cam_2.set(cv.CAP_PROP_FRAME_WIDTH, STREAM_WIDTH)
 cam_2.set(cv.CAP_PROP_FRAME_HEIGHT, STREAM_HEIGHT)
 cam_2.set(cv.CAP_PROP_FPS, 15)
-cam_1.set(cv.CAP_PROP_FOURCC, fourcc_yuv2)
+cam_2.set(cv.CAP_PROP_FOURCC, fourcc_yuv2)
+cam_2.set(cv.CAP_PROP_BUFFERSIZE, 5)
+
 
 
 
