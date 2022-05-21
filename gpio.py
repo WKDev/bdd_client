@@ -24,19 +24,19 @@ def clear_gpio():
     time.sleep(GPIO_INT)
 
 
-def run_sequential():
+def run_sequential(interval):
     print('sequantial')
     for i in range(1,4):
         rd_dev = rd.choices(devs, k=1)
 
         GPIO.output(rd_dev, GPIO.HIGH)
-        time.sleep(GPIO_INT)
+        time.sleep(interval)
         GPIO.output(rd_dev, GPIO.LOW)
-        time.sleep(GPIO_INT)
+        time.sleep(interval)
 
 
 
-def run_at_once():
+def run_at_once(interval):
     print('run at once')
     pick_num = rd.choice(range(1,4))
 
@@ -45,24 +45,24 @@ def run_at_once():
         rd_devs = rd.choices(devs, k=pick_num)
 
         GPIO.output(rd_devs, GPIO.HIGH)
-        time.sleep(GPIO_INT)
+        time.sleep(interval)
         GPIO.output(rd_devs, GPIO.LOW)
         # time.sleep(GPIO_INT)
 
-def exec_ext():
+def exec_ext(interval):
     rnd = rd.random()
     print(rnd)
     if rnd > 0.5:
-        run_sequential()
+        run_sequential(interval)
     else:
-        run_at_once()
+        run_at_once(interval)
 
 
 
 
 if __name__ == "__main__":
     init_gpio()
-    exec_ext()
+    exec_ext(interval=GPIO_INT)
     # while True:
     #     GPIO.output(23, GPIO.HIGH)
     #     time.sleep(1)
