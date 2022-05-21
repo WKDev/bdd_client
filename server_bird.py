@@ -27,7 +27,9 @@ if not os.path.exists(base_path):
 
 fourcc = cv.VideoWriter_fourcc(*'XVID')
 fourcc_h264 = cv.VideoWriter_fourcc(*'H264')
-fourcc_MJPG = cv.VideoWriter_fourcc(*'MJPG')
+fourcc_mjpg = cv.VideoWriter_fourcc(*'MJPG')
+fourcc_yuv2 = cv.VideoWriter_fourcc(*'YUV2')
+
 record = False
 
 # v4l2-ctl -d 0 --list-formats # dev/video0
@@ -43,18 +45,20 @@ cam_2 = cv.VideoCapture(2)
 cam_1.set(cv.CAP_PROP_FRAME_WIDTH, STREAM_WIDTH)
 cam_1.set(cv.CAP_PROP_FRAME_HEIGHT, STREAM_HEIGHT)
 cam_1.set(cv.CAP_PROP_FPS, 15)
-cam_1.set(cv.CAP_PROP_FOURCC, fourcc_h264);
+cam_1.set(cv.CAP_PROP_FOURCC, fourcc_yuv2)
 
 cam_2.set(cv.CAP_PROP_FRAME_WIDTH, STREAM_WIDTH)
 cam_2.set(cv.CAP_PROP_FRAME_HEIGHT, STREAM_HEIGHT)
 cam_2.set(cv.CAP_PROP_FPS, 15)
+cam_1.set(cv.CAP_PROP_FOURCC, fourcc_yuv2)
+
 
 
 def read_cam(cam, cam_id=0):
 
     # camera 정의
     # cam = cv.VideoCapture(cam_id, cv.CAP_DSHOW) # Windows의 경우 이걸 실행
-    cam.get(cv.CAP_PROP_FPS)
+    print(cam.get(cv.CAP_PROP_FPS), flush=True)
 
     if not cam.isOpened():
         if cam_id == 0:
