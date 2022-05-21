@@ -19,8 +19,9 @@ def init_gpio():
 
 
 def clear_gpio():
-    for dev in devs:
-       GPIO.output(dev, GPIO.LOW)
+    GPIO.output(devs, GPIO.LOW)
+    time.sleep(GPIO_INT)
+
 
 def run_sequential():
     rd_devs = rd.shuffle(devs)
@@ -31,11 +32,11 @@ def run_sequential():
 
 
 def run_at_once():
-    rd_devs = rd.choices(devs, k=rd.choice(range(1,3)))
-    for dev in rd_devs:
-        GPIO.output(dev, GPIO.HIGH)
-        time.sleep(GPIO_INT)
+    pick_num = rd.choice(range(1,4))
+    rd_devs = rd.choices(devs, k=pick_num)
 
+    GPIO.output(rd_devs, GPIO.HIGH)
+    time.sleep(GPIO_INT)
     clear_gpio()
 
 def exec_ext():
@@ -49,13 +50,17 @@ def exec_ext():
 
 if __name__ == "__main__":
     init_gpio()
-    # exec_ext()
-    while True:
-        GPIO.output(23, GPIO.HIGH)
-        time.sleep(1)
-        print('off')
-        GPIO.output(23, GPIO.LOW)
-        time.sleep(1)
+    exec_ext()
+    # while True:
+    #     GPIO.output(23, GPIO.HIGH)
+    #     time.sleep(1)
+    #     print('off')
+    #     GPIO.output(23, GPIO.LOW)
+    #     time.sleep(1)
+
+    # run_at_once()
+
+
 
 
 
