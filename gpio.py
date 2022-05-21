@@ -50,20 +50,20 @@ async def run_at_once(interval):
         GPIO.output(rd_devs, GPIO.LOW)
         # await asyncio.sleep(GPIO_INT)
 
-def exec_ext(interval):
+async def exec_ext(interval):
     rnd = rd.random()
     print(rnd)
     if rnd > 0.5:
-        asyncio.run(run_sequential(interval))
+        await asyncio.gather(run_sequential(interval))
     else:
-        asyncio.run(run_at_once(interval))
+        await asyncio.gather(run_at_once(interval))
 
 
 
 
 if __name__ == "__main__":
     init_gpio()
-    exec_ext(interval=GPIO_INT)
+    asyncio.run(exec_ext(interval=GPIO_INT))
     # while True:
     #     GPIO.output(23, GPIO.HIGH)
     #     time.sleep(1)
