@@ -9,7 +9,7 @@ devs = [23,24,25]
 devs_bcm = [16,18,22]
 
 
-GPIO_INT = 1000
+GPIO_INT = 1
 
 def init_gpio():
     GPIO.setmode(GPIO.BCM)
@@ -51,11 +51,11 @@ if __name__ == "__main__":
     init_gpio()
     # exec_ext()
     while True:
-        GPIO.output(18, GPIO.HIGH)
-        time.sleep(300)
+        GPIO.output(23, GPIO.HIGH)
+        time.sleep(1)
         print('off')
-        GPIO.output(18, GPIO.LOW)
-        time.sleep(300)
+        GPIO.output(23, GPIO.LOW)
+        time.sleep(1)
 
 
 
