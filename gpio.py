@@ -25,15 +25,15 @@ def clear_gpio():
     time.sleep(GPIO_INT)
 
 
-async def run_sequential(interval):
+def run_sequential(interval):
     print('sequential with interval : ' + str(interval))
     for i in range(1,4):
         rd_dev = rd.choices(devs, k=1)
 
         GPIO.output(rd_dev, GPIO.HIGH)
         time.sleep(interval)
-        GPIO.output(rd_dev, GPIO.LOW)
-        time.sleep(interval)
+    GPIO.output(devs, GPIO.LOW)
+    time.sleep(interval)    
 
 
 
@@ -48,7 +48,8 @@ def run_at_once(interval):
         GPIO.output(rd_devs, GPIO.HIGH)
         time.sleep(interval)
         GPIO.output(rd_devs, GPIO.LOW)
-        # await asyncio.sleep(GPIO_INT)
+    GPIO.output(devs, GPIO.LOW)
+    time.sleep(interval)    
 
 def exec_ext(interval):
     rnd = rd.random()
