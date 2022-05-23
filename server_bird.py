@@ -1,22 +1,23 @@
-import uvicorn, os
+import uvicorn
+import os
 import cv2 as cv
 import threading
 
 from pydantic import BaseModel
 
 from fastapi import FastAPI
-# from fastapi.templating import Jinja2Templates
 from fastapi.responses import StreamingResponse
-
-# from gpio import *
+import asyncio
+from time import time, sleep
+from gpio import *
 app = FastAPI()
+
 
 class ExtParams(BaseModel):
     name: str
     length: int
 
 
-# templates = Jinja2Templates(directory="templates")
 CHUNK_SIZE = 1024 * 1024
 
 
@@ -39,8 +40,14 @@ record = False
 STREAM_WIDTH = 640
 STREAM_HEIGHT = 480
 
-cam_1 = cv.VideoCapture(0)
-cam_2 = cv.VideoCapture(2)
+global cam_1
+global cam_2
+
+CAM_1_ID = 0
+CAM_2_ID = 2
+
+cam_1 = cv.VideoCapture(CAM_1_ID)
+cam_2 = cv.VideoCapture(CAM_2_ID)
 
 cam_1.set(cv.CAP_PROP_FRAME_WIDTH, STREAM_WIDTH)
 cam_1.set(cv.CAP_PROP_FRAME_HEIGHT, STREAM_HEIGHT)
@@ -55,78 +62,146 @@ cam_2.set(cv.CAP_PROP_FOURCC, fourcc_yuv2)
 cam_2.set(cv.CAP_PROP_BUFFERSIZE, 5)
 
 
+def frame_to_byte(frame):
+    # print('disconnected during stream')
+
+    ret, buffer = cv.imencode('.jpg', frame)
+    # frame을 byte로 변경 후 특정 식??으로 변환 후에
+    # yield로 하나씩 넘겨준다.
+    return buffer.tobytes()
+
+def read_cam(cam_id=0):
+    global cam_1
+    global cam_2
+
+    if cam_id == CAM_1_ID:
+        while True:
+            # camera 정의
+            # cam = cv.VideoCapture(cam_id, cv.CAP_DSHOW) # Windows의 경우 이걸 실행
+            print(cam_1.get(cv.CAP_PROP_FPS), flush=True)
+
+            if cam_1.isOpened():
+                while True:
+                    # 카메라 값 불러오기
+                    ret, frame = cam_1.read()
+                    if ret:
+                        yield (b'--frame\r\n'
+                            b'Content-Type:image/jpeg\r\n'
+                            b'Content-Length: ' + f"{len(frame_to_byte(frame))}".encode() + b'\r\n'
+                            b'\r\n' + bytearray(frame_to_byte(frame)) + b'\r\n')
+                        
+                    else:
+                        # await reconnect_cam()
+                        print('[WARN @ {}]cannot read frame from cam_1.. releasing...'.format(time()))
+                        cam_1.release()
 
 
-def read_cam(cam, cam_id=0):
+                        loading_img = cv.imread('./assets/cam1_opening.png')
 
-    # camera 정의
-    # cam = cv.VideoCapture(cam_id, cv.CAP_DSHOW) # Windows의 경우 이걸 실행
-    print(cam.get(cv.CAP_PROP_FPS), flush=True)
+                        yield (b'--frame\r\n'
+                            b'Content-Type:image/jpeg\r\n'
+                            b'Content-Length: ' + f"{len(frame_to_byte(loading_img))}".encode() + b'\r\n'
+                            b'\r\n' + bytearray(frame_to_byte(loading_img)) + b'\r\n')
+                        sleep(1)
 
-    if not cam.isOpened():
-        if cam_id == 0:
-            loading_img = cv.imread('./assets/cam1_opening.png')
-        elif cam_id == 1:
-            loading_img = cv.imread('./assets/cam2_opening.png')
-        elif cam_id == 2:
-            loading_img = cv.imread('./assets/cam3_opening.png')
-        else:
-            loading_img = cv.imread('./assets/cam3_opening.png')
+                        break
 
-        ret, img = cv.imencode('.jpg', loading_img)
-
-        byte_img = img.tobytes()
-        yield (b'--frame\r\n'
-       b'Content-Type:image/jpeg\r\n'
-       b'Content-Length: ' + f"{len(frame)}".encode() + b'\r\n'
-       b'\r\n' + frame + b'\r\n')
-
-    while cam.isOpened():
-        # 카메라 값 불러오기
-        success, frame = cam.read()
-
-        if not success:
-
-            if cam_id == 0:
-                loading_img = cv.imread('./assets/cam1_opening.png')
-            elif cam_id == 1:
-                loading_img = cv.imread('./assets/cam2_opening.png')
-            elif cam_id == 2:
-                loading_img = cv.imread('./assets/cam3_opening.png')
             else:
-                loading_img = cv.imread('./assets/cam3_opening.png')
+                while True:
+                    cam_1.release()
+                    print('[WARN @ {}]cam_is not opened.. trying to reconnect'.format(time()))
+                    cam_1=cv.VideoCapture(cam_id)
+                    cam_1.set(cv.CAP_PROP_FRAME_WIDTH, STREAM_WIDTH)
+                    cam_1.set(cv.CAP_PROP_FRAME_HEIGHT, STREAM_HEIGHT)
+                    cam_1.set(cv.CAP_PROP_FPS, 15)
+                    cam_1.set(cv.CAP_PROP_FOURCC, fourcc_yuv2)
+                    cam_1.set(cv.CAP_PROP_BUFFERSIZE, 5)
+                    
+                    if cam_1.isOpened():
+                        break
+
+                    loading_img = cv.imread('./assets/cam1_opening.png')
+
+                    yield (b'--frame\r\n'
+                        b'Content-Type:image/jpeg\r\n'
+                        b'Content-Length: ' + f"{len(frame_to_byte(loading_img))}".encode() + b'\r\n'
+                        b'\r\n' + bytearray(frame_to_byte(loading_img)) + b'\r\n')
+
+                    sleep(1)
+            sleep(1)
 
 
-            ret, img = cv.imencode('.jpg', loading_img)
 
-            byte_img = img.tobytes()
-            yield (b'--frame\r\n'
-       b'Content-Type:image/jpeg\r\n'
-       b'Content-Length: ' + f"{len(img)}".encode() + b'\r\n'
-       b'\r\n' + bytearray(byte_img) + b'\r\n')
-        else:
+        print('[WARN @ {}]cam_is terminated outside of while scope'.format(time()))
+    if cam_id == CAM_2_ID:
+        while True:
+            # camera 정의
+            # cam = cv.VideoCapture(cam_id, cv.CAP_DSHOW) # Windows의 경우 이걸 실행
+            print(cam_2.get(cv.CAP_PROP_FPS), flush=True)
 
-            ret, buffer = cv.imencode('.jpg', frame)
-            # frame을 byte로 변경 후 특정 식??으로 변환 후에
-            # yield로 하나씩 넘겨준다.
-            frame = buffer.tobytes()
-            yield (b'--frame\r\n'
-       b'Content-Type:image/jpeg\r\n'
-       b'Content-Length: ' + f"{len(frame)}".encode() + b'\r\n'
-       b'\r\n' + frame + b'\r\n')
+            if cam_2.isOpened():
+                while True:
+                    # 카메라 값 불러오기
+                    ret, frame = cam_2.read()
+                    if ret:
+                        yield (b'--frame\r\n'
+                            b'Content-Type:image/jpeg\r\n'
+                            b'Content-Length: ' + f"{len(frame_to_byte(frame))}".encode() + b'\r\n'
+                            b'\r\n' + bytearray(frame_to_byte(frame)) + b'\r\n')
+                        
+                    else:
+                        # await reconnect_cam()
+                        print('[WARN @ {}]cannot read frame from cam_2.. releasing...'.format(time()))
+                        cam_2.release()
 
 
-@app.get("/live/1")
+                        loading_img = cv.imread('./assets/cam1_opening.png')
+
+                        yield (b'--frame\r\n'
+                            b'Content-Type:image/jpeg\r\n'
+                            b'Content-Length: ' + f"{len(frame_to_byte(loading_img))}".encode() + b'\r\n'
+                            b'\r\n' + bytearray(frame_to_byte(loading_img)) + b'\r\n')
+
+                        break
+
+            else:
+                while True:
+                    cam_2.release()
+                    print('[WARN @ {}]cam2_is not opened.. trying to reconnect'.format(time()))
+                    cam_2=cv.VideoCapture(cam_id)
+                    cam_2.set(cv.CAP_PROP_FRAME_WIDTH, STREAM_WIDTH)
+                    cam_2.set(cv.CAP_PROP_FRAME_HEIGHT, STREAM_HEIGHT)
+                    cam_2.set(cv.CAP_PROP_FPS, 15)
+                    cam_2.set(cv.CAP_PROP_FOURCC, fourcc_yuv2)
+                    cam_2.set(cv.CAP_PROP_BUFFERSIZE, 5)
+                    
+                    if cam_2.isOpened():
+                        break
+                    
+                    loading_img = cv.imread('./assets/cam1_opening.png')
+
+                    yield (b'--frame\r\n'
+                        b'Content-Type:image/jpeg\r\n'
+                        b'Content-Length: ' + f"{len(frame_to_byte(loading_img))}".encode() + b'\r\n'
+                        b'\r\n' + bytearray(frame_to_byte(loading_img)) + b'\r\n')
+            sleep(1)
+
+        print('[WARN @ {}]cam2_is terminated outside of while scope'.format(time()))
+
+        
+@app.get("/1")
 def bird_detection():
-    return StreamingResponse(read_cam(cam=cam_1, cam_id=0), media_type="multipart/x-mixed-replace; boundary=frame")
+    return StreamingResponse(read_cam(cam_id=CAM_1_ID), media_type="multipart/x-mixed-replace; boundary=frame")
 
-@app.get("/live/2")
+
+@app.get("/2")
 def bird_detection_2():
-    return StreamingResponse(read_cam(cam=cam_2, cam_id=1), media_type="multipart/x-mixed-replace; boundary=frame")
+    return StreamingResponse(read_cam(cam_id=CAM_2_ID), media_type="multipart/x-mixed-replace; boundary=frame")
+
 
 @app.post("/cmd/ext")
 # EXTERMINATION
-async def extermination(item : ExtParams):
+async def extermination(item: ExtParams):
 
     # exec_ext(interval=item.length)
     t = threading.Thread(target=exec_ext, args=(item.length,))
@@ -135,11 +210,5 @@ async def extermination(item : ExtParams):
 
 
 if __name__ == "__main__":
-    # init_gpio()
+    init_gpio()
     uvicorn.run(app, host="0.0.0.0", port=5000)
-
-    # Works To Do::
-    # 1. 다중 카메라 연동
-    # 2. 캡처
-    # 3. gpio 연동
-    # 4. 서버 단에서 데이터 추론 후 교체 기능
