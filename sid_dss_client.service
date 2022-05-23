@@ -1,0 +1,16 @@
+ # mv . /etc/systemd/system/sid_sdd_client.service
+ [Unit]
+ Description=My Script Service
+ After=multi-user.target
+
+ [Service]
+ Type=idle
+ WorkingDirectory=/home/bdd_client
+ ExecStart=/usr/bin/python3.9 -u /home/ioss/bdd_client/server_bird.py // 절대경로
+ StandardOutput=file:/home/ioss/bdd_client/startup.log // 절대 경로
+ StandardError=file:/home/ioss/bdd_client/startup_error.log // 절대 경로
+
+
+ [Install]
+ WantedBy=multi-user.target
+
