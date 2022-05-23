@@ -8,7 +8,7 @@ from fastapi import FastAPI
 # from fastapi.templating import Jinja2Templates
 from fastapi.responses import StreamingResponse
 
-from gpio import *
+# from gpio import *
 app = FastAPI()
 
 class ExtParams(BaseModel):
@@ -76,8 +76,10 @@ def read_cam(cam, cam_id=0):
         ret, img = cv.imencode('.jpg', loading_img)
 
         byte_img = img.tobytes()
-        yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
-               bytearray(byte_img) + b'\r\n')
+        yield (b'--frame\r\n'
+       b'Content-Type:image/jpeg\r\n'
+       b'Content-Length: ' + f"{len(frame)}".encode() + b'\r\n'
+       b'\r\n' + frame + b'\r\n')
 
     while cam.isOpened():
         # 카메라 값 불러오기
@@ -98,16 +100,20 @@ def read_cam(cam, cam_id=0):
             ret, img = cv.imencode('.jpg', loading_img)
 
             byte_img = img.tobytes()
-            yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
-                   bytearray(byte_img) + b'\r\n')
+            yield (b'--frame\r\n'
+       b'Content-Type:image/jpeg\r\n'
+       b'Content-Length: ' + f"{len(img)}".encode() + b'\r\n'
+       b'\r\n' + bytearray(byte_img) + b'\r\n')
         else:
 
             ret, buffer = cv.imencode('.jpg', frame)
             # frame을 byte로 변경 후 특정 식??으로 변환 후에
             # yield로 하나씩 넘겨준다.
             frame = buffer.tobytes()
-            yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
-               bytearray(frame) + b'\r\n')
+            yield (b'--frame\r\n'
+       b'Content-Type:image/jpeg\r\n'
+       b'Content-Length: ' + f"{len(frame)}".encode() + b'\r\n'
+       b'\r\n' + frame + b'\r\n')
 
 
 @app.get("/live/1")
@@ -129,7 +135,7 @@ async def extermination(item : ExtParams):
 
 
 if __name__ == "__main__":
-    init_gpio()
+    # init_gpio()
     uvicorn.run(app, host="0.0.0.0", port=5000)
 
     # Works To Do::
