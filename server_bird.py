@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 import asyncio
-from time import time, sleep
+import time
 from gpio import *
 app = FastAPI()
 
@@ -92,8 +92,9 @@ def read_cam(cam_id=0):
                         
                     else:
                         # await reconnect_cam()
-                        print('[WARN @ {}]cannot read frame from cam_1.. releasing...'.format(time()))
+                        print('[WARN @ {}]cannot read frame from cam_1.. releasing...'.format(time.time()))
                         cam_1.release()
+                        
 
 
                         loading_img = cv.imread('./assets/cam1_opening.png')
@@ -102,14 +103,14 @@ def read_cam(cam_id=0):
                             b'Content-Type:image/jpeg\r\n'
                             b'Content-Length: ' + f"{len(frame_to_byte(loading_img))}".encode() + b'\r\n'
                             b'\r\n' + bytearray(frame_to_byte(loading_img)) + b'\r\n')
-                        sleep(1)
+                        time.sleep(1)
 
                         break
 
             else:
                 while True:
                     cam_1.release()
-                    print('[WARN @ {}]cam_is not opened.. trying to reconnect'.format(time()))
+                    print('[WARN @ {}]cam_is not opened.. trying to reconnect'.format(time.time()))
                     cam_1=cv.VideoCapture(cam_id)
                     cam_1.set(cv.CAP_PROP_FRAME_WIDTH, STREAM_WIDTH)
                     cam_1.set(cv.CAP_PROP_FRAME_HEIGHT, STREAM_HEIGHT)
@@ -127,12 +128,12 @@ def read_cam(cam_id=0):
                         b'Content-Length: ' + f"{len(frame_to_byte(loading_img))}".encode() + b'\r\n'
                         b'\r\n' + bytearray(frame_to_byte(loading_img)) + b'\r\n')
 
-                    sleep(1)
-            sleep(1)
+                    time.sleep(1)
+            time.sleep(1)
 
 
 
-        print('[WARN @ {}]cam_is terminated outside of while scope'.format(time()))
+        # print('[WARN @ {}]cam_is terminated outside of while scope'.format(time()))
     if cam_id == CAM_2_ID:
         while True:
             # camera 정의
@@ -151,7 +152,7 @@ def read_cam(cam_id=0):
                         
                     else:
                         # await reconnect_cam()
-                        print('[WARN @ {}]cannot read frame from cam_2.. releasing...'.format(time()))
+                        print('[WARN @ {}]cannot read frame from cam_2.. releasing...'.format(time.time()))
                         cam_2.release()
 
 
@@ -167,7 +168,7 @@ def read_cam(cam_id=0):
             else:
                 while True:
                     cam_2.release()
-                    print('[WARN @ {}]cam2_is not opened.. trying to reconnect'.format(time()))
+                    print('[WARN @ {}]cam2_is not opened.. trying to reconnect'.format(time.time()))
                     cam_2=cv.VideoCapture(cam_id)
                     cam_2.set(cv.CAP_PROP_FRAME_WIDTH, STREAM_WIDTH)
                     cam_2.set(cv.CAP_PROP_FRAME_HEIGHT, STREAM_HEIGHT)
@@ -184,9 +185,9 @@ def read_cam(cam_id=0):
                         b'Content-Type:image/jpeg\r\n'
                         b'Content-Length: ' + f"{len(frame_to_byte(loading_img))}".encode() + b'\r\n'
                         b'\r\n' + bytearray(frame_to_byte(loading_img)) + b'\r\n')
-            sleep(1)
+            time.sleep(1)
 
-        print('[WARN @ {}]cam2_is terminated outside of while scope'.format(time()))
+        print('[WARN @ {}]cam2_is terminated outside of while scope'.format(time.time()))
 
         
 @app.get("/1")
