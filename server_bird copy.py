@@ -71,7 +71,7 @@ def frame_to_byte(frame):
     # yield로 하나씩 넘겨준다.
     return buffer.tobytes()
 
-async def read_cam(cam_id=0):
+def read_cam(cam_id=0):
     global cam_1
     global cam_2
 
@@ -84,7 +84,6 @@ async def read_cam(cam_id=0):
             if cam_1.isOpened():
                 while True:
                     # 카메라 값 불러오기
-                    await asyncio.sleep(0.06)
                     ret, frame = cam_1.read()
 
                     # frame = frame.astype(np.uint8)
@@ -109,7 +108,7 @@ async def read_cam(cam_id=0):
                             b'Content-Type:image/jpeg\r\n'
                             b'Content-Length: ' + f"{len(frame_to_byte(loading_img))}".encode() + b'\r\n'
                             b'\r\n' + bytearray(frame_to_byte(loading_img)) + b'\r\n')
-                        await asyncio.sleep(1)
+                        time.sleep(1)
 
                         break
 
@@ -134,8 +133,8 @@ async def read_cam(cam_id=0):
                         b'Content-Length: ' + f"{len(frame_to_byte(loading_img))}".encode() + b'\r\n'
                         b'\r\n' + bytearray(frame_to_byte(loading_img)) + b'\r\n')
 
-                    await asyncio.sleep(1)
-            await asyncio.sleep(1)
+                    time.sleep(1)
+            time.sleep(1)
 
 
 
@@ -145,7 +144,6 @@ async def read_cam(cam_id=0):
             # camera 정의
             # cam = cv.VideoCapture(cam_id, cv.CAP_DSHOW) # Windows의 경우 이걸 실행
             print(cam_2.get(cv.CAP_PROP_FPS), flush=True)
-            await asyncio.sleep(0.06)
 
             if cam_2.isOpened():
                 while True:
@@ -195,19 +193,18 @@ async def read_cam(cam_id=0):
                         b'Content-Type:image/jpeg\r\n'
                         b'Content-Length: ' + f"{len(frame_to_byte(loading_img))}".encode() + b'\r\n'
                         b'\r\n' + bytearray(frame_to_byte(loading_img)) + b'\r\n')
-            await asyncio.sleep(1)
+            time.sleep(1)
 
         print('[WARN @ {}]cam2_is terminated outside of while scope'.format(time.time()))
 
         
 @app.get("/1")
-async def bird_detection():
-    
+def bird_detection():
     return StreamingResponse(read_cam(cam_id=CAM_1_ID), media_type="multipart/x-mixed-replace; boundary=frame")
 
 
 @app.get("/2")
-async def bird_detection_2():
+def bird_detection_2():
     return StreamingResponse(read_cam(cam_id=CAM_2_ID), media_type="multipart/x-mixed-replace; boundary=frame")
 
 
