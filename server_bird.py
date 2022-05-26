@@ -38,8 +38,8 @@ record = False
 # v4l2-ctl -d 0 --list-formats-ext # dev/video0
 
 
-STREAM_WIDTH = 1280 
-STREAM_HEIGHT = 720
+STREAM_WIDTH = 640 
+STREAM_HEIGHT = 480
 
 global cam_1
 global cam_2
