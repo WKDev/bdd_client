@@ -91,9 +91,9 @@ def read_cam(cam_id=0):
                             b'\r\n' + bytearray(frame_to_byte(frame)) + b'\r\n')
                         
                     else:
-                        # await reconnect_cam()
-                        print('[WARN @ {}]cannot read frame from cam_1.. releasing...'.format(time.time()))
-                        cam_1.release()
+                        # # await reconnect_cam()
+                        # print('[WARN @ {}]cannot read frame from cam_1.. releasing...'.format(time.time()))
+                        # cam_1.release()
                         
 
 
@@ -151,9 +151,9 @@ def read_cam(cam_id=0):
                             b'\r\n' + bytearray(frame_to_byte(frame)) + b'\r\n')
                         
                     else:
-                        # await reconnect_cam()
-                        print('[WARN @ {}]cannot read frame from cam_2.. releasing...'.format(time.time()))
-                        cam_2.release()
+                        # # await reconnect_cam()
+                        # print('[WARN @ {}]cannot read frame from cam_2.. releasing...'.format(time.time()))
+                        # cam_2.release()
 
 
                         loading_img = cv.imread('./assets/cam1_opening.png')
