@@ -4,6 +4,7 @@ import cv2 as cv
 import threading
 
 from pydantic import BaseModel
+import numpy as np
 
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
@@ -84,6 +85,9 @@ def read_cam(cam_id=0):
                 while True:
                     # 카메라 값 불러오기
                     ret, frame = cam_1.read()
+
+                    frame = frame.astype(np.uint8)
+
                     frame = cv.resize((480,640), frame)
                     if ret:
                         yield (b'--frame\r\n'
@@ -145,6 +149,7 @@ def read_cam(cam_id=0):
                 while True:
                     # 카메라 값 불러오기
                     ret, frame = cam_2.read()
+                    frame = frame.astype(np.uint8)
                     frame = cv.resize((480,640), frame)
 
                     if ret:
