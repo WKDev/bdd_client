@@ -89,7 +89,7 @@ async def read_cam(cam_id=0):
 
                     # frame = frame.astype(np.uint8)
 
-                    frame = cv.resize(frame,(480,640))
+                    # frame = cv.resize(frame,(480,640))
                     if ret:
                         yield (b'--frame\r\n'
                             b'Content-Type:image/jpeg\r\n'
@@ -152,7 +152,7 @@ async def read_cam(cam_id=0):
                     # 카메라 값 불러오기
                     ret, frame = cam_2.read()
                     # frame = frame.astype(np.uint8)
-                    frame = cv.resize(frame,(480,640))
+                    # frame = cv.resize(frame,(480,640))
 
                     if ret:
                         yield (b'--frame\r\n'
