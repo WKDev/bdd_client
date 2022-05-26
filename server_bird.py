@@ -37,8 +37,8 @@ record = False
 # v4l2-ctl -d 0 --list-formats-ext # dev/video0
 
 
-STREAM_WIDTH = 640
-STREAM_HEIGHT = 480
+STREAM_WIDTH = 1280 
+STREAM_HEIGHT = 720
 
 global cam_1
 global cam_2
@@ -84,6 +84,7 @@ def read_cam(cam_id=0):
                 while True:
                     # 카메라 값 불러오기
                     ret, frame = cam_1.read()
+                    frame = cv.resize((480,640), frame)
                     if ret:
                         yield (b'--frame\r\n'
                             b'Content-Type:image/jpeg\r\n'
@@ -144,6 +145,8 @@ def read_cam(cam_id=0):
                 while True:
                     # 카메라 값 불러오기
                     ret, frame = cam_2.read()
+                    frame = cv.resize((480,640), frame)
+
                     if ret:
                         yield (b'--frame\r\n'
                             b'Content-Type:image/jpeg\r\n'
