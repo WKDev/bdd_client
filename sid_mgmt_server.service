@@ -4,20 +4,29 @@
 # sudo systemctl enable sid_dss_client.service
 # sudo systemctl status sid_dss_client.service 
 
+# mv . /etc/systemd/system/sid_dss_client.service
+# sudo chmod 755 ~/.config/systemd/system/user/sid_dss_client.service
+# sudo systemctl --user enable sid_dss_client.service
+# sudo systemctl --user status sid_dss_client.service 
+# sudo systemctl --user start/stop sid_dss_client.service 
+
+
 [Unit]
 Description=SID Digital Scarescrow Manangement Service
+PartOf=graphical-session.target
 After=multi-user.target
 
 [Service]
-User=ioss # important!
-Type=simple
-WorkingDirectory=/home/ioss/backend
-ExecStartPre=/home/ioss/anaconda3/envs/venv/bin/python3 /home/ioss/backend/main.py
-ExecStart=/bin/bash -c 'firefox -kiosk 127.0.0.1:8080'
-StandardOutput=file:/home/ioss/backend/start.log
-StandardError=file:/home/ioss/backend/start-err.log
+# important!
+Type=oneshot
+WorkingDirectory=/home/ioss/ioss/backend
+ExecStartPre=/home/ioss/anaconda3/envs/venv/bin/python3 /home/ioss/ioss/backend/main.py
+ExecStart=/bin/sleep 5
+ExecStartPost=google-chrome --kiosk 127.0.0.1:8080
+StandardOutput=file:/home/ioss/ioss/backend/start.log
+StandardError=file:/home/ioss/ioss/backend/start-err.log
 Restart=on-failure
 RestartSec=1s
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target multi-user.target
