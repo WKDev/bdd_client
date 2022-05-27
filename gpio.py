@@ -32,8 +32,8 @@ def run_sequential(interval):
 
         GPIO.output(rd_dev, GPIO.HIGH)
         time.sleep(interval)
-    GPIO.output(devs, GPIO.LOW)
-    time.sleep(interval)    
+        GPIO.output(devs, GPIO.LOW)
+        time.sleep(interval)    
 
 
 
@@ -48,8 +48,8 @@ def run_at_once(interval):
         GPIO.output(rd_devs, GPIO.HIGH)
         time.sleep(interval)
         GPIO.output(rd_devs, GPIO.LOW)
-    GPIO.output(devs, GPIO.LOW)
-    time.sleep(interval)    
+        GPIO.output(devs, GPIO.LOW)
+        time.sleep(interval)    
 
 def exec_ext(interval):
     rnd = rd.random()
