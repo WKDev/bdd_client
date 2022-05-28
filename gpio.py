@@ -49,15 +49,29 @@ def run_at_once(interval):
         time.sleep(interval)
         GPIO.output(rd_devs, GPIO.LOW)
         GPIO.output(devs, GPIO.LOW)
-        time.sleep(interval)    
+        time.sleep(interval)   
+         
+
+def run_demo(interval):
+    print('run at once with interval : ' + str(interval))
+    pick_num = rd.choice(range(1,4))
+
+    for i in range(1,4):
+        GPIO.output(devs, GPIO.HIGH)
+        time.sleep(interval)
+        GPIO.output(devs, GPIO.LOW)
+ 
+        
 
 def exec_ext(interval):
     rnd = rd.random()
     print(rnd)
-    if rnd > 0.5:
-        run_sequential(interval)
-    else:
-        run_at_once(interval)
+    # if rnd > 0.5:
+    #     run_sequential(interval)
+    # else:
+    #     run_at_once(interval)
+    run_demo(interval)
+
 
 
 
