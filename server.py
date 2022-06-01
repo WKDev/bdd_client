@@ -6,7 +6,7 @@ from fastapi import FastAPI
 # from fastapi.templating import Jinja2Templates
 from fastapi.responses import StreamingResponse
 
-from gpio import *
+# from gpio import *
 app = FastAPI()
 
 
@@ -115,7 +115,6 @@ def bird_detection_3():
 def bird_detection_4():
     return StreamingResponse(read_cam(cam=cam_4, cam_id=3), media_type="multipart/x-mixed-replace; boundary=frame")
 
-
 @app.get("/cmd/pipeline")
 def bird_detection_5():
     return StreamingResponse(read_cam(cam_id=2), media_type="multipart/x-mixed-replace; boundary=frame")
@@ -127,7 +126,7 @@ def bird_detection_6():
 
 
 if __name__ == "__main__":
-    init_gpio()
+    # init_gpio()
     uvicorn.run(app, host="0.0.0.0", port=5000)
 
     # Works To Do::
